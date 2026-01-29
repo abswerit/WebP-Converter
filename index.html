@@ -4,96 +4,249 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JPG/PNG to WebP Converter</title>
+    <!-- Google Font for Modern Bengali Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* CSS ডিজাইন */
+        /* Modern Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Hind Siliguri', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-        h2 { color: #333; margin-bottom: 20px; }
-        .upload-box {
-            border: 2px dashed #007bff;
             padding: 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: background 0.3s;
         }
-        .upload-box:hover { background-color: #eef6ff; }
-        input[type="file"] { display: none; }
+
+        /* Main Card Container */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem; /* প্যাডিং বাড়ানো হয়েছে */
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Logo Styling */
+        .logo {
+            width: 160px;
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        /* Typography */
+        h2 {
+            color: #2d3748;
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        p {
+            color: #718096;
+            margin-top: 0.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Upload Box Design */
+        .upload-box {
+            border: 2px dashed #cbd5e0;
+            padding: 3rem 1.5rem; /* আপলোড বক্সে বেশি প্যাডিং */
+            border-radius: 16px;
+            cursor: pointer;
+            background-color: #f7fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-box:hover {
+            border-color: #667eea;
+            background-color: #ebf4ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .upload-text {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .upload-subtext {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Status & Preview Area */
+        .status {
+            font-weight: 600;
+            color: #667eea;
+            margin-top: 1rem;
+            min-height: 24px;
+        }
+
+        #preview-area {
+            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+            border: 4px solid white;
+        }
+
+        /* Download Button */
         .btn {
-            background-color: #007bff;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 1rem 2.5rem; /* বাটনে প্যাডিং বাড়ানো হয়েছে */
+            border-radius: 50px; /* রাউন্ড শেপ */
             cursor: pointer;
-            font-size: 16px;
-            display: inline-block;
+            font-size: 1.1rem;
+            font-weight: 600;
             text-decoration: none;
-            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        #preview-area { margin-top: 20px; display: none; }
-        img { max-width: 100%; height: auto; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ddd; }
-        .status { color: #666; font-size: 0.9em; margin-top: 10px; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>ছবি কনভার্টার (WebP)</h2>
-    <p>JPG বা PNG ছবি আপলোড করুন</p>
+    <!-- লোগো -->
+    <img src="https://raw.githubusercontent.com/abswerit/WebP-Converter/main/Logo.gif" alt="Logo" class="logo">
     
+    <h2>WebP কনভার্টার</h2>
+    <p>আপনার ছবিকে অপ্টিমাইজ করুন নিমিষেই</p>
+    
+    <!-- আধুনিক আপলোড বক্স -->
     <label for="fileInput" class="upload-box">
-        ক্লিক করে ছবি সিলেক্ট করুন
+        <div class="upload-icon">☁️</div>
+        <div class="upload-text">ছবি আপলোড করতে ক্লিক করুন</div>
+        <div class="upload-subtext">সমর্থিত ফাইল: JPG, PNG, JPEG</div>
         <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg">
     </label>
 
     <div id="status" class="status"></div>
 
+    <!-- প্রিভিউ এরিয়া -->
     <div id="preview-area">
-        <h3>কনভার্ট করা ছবি:</h3>
-        <img id="webpImage" src="" alt="WebP Preview">
+        <h3 style="color:#4a5568; margin-bottom:15px;">আপনার নতুন ছবি:</h3>
+        <img id="webpImage" class="preview-img" src="" alt="WebP Preview">
         <br>
-        <a id="downloadLink" class="btn" download="converted-image.webp">ডাউনলোড করুন</a>
+        <a id="downloadLink" class="btn" download="converted-image.webp">
+            ⬇️ ডাউনলোড করুন
+        </a>
     </div>
 </div>
 
 <script>
-    // JavaScript লজিক
     const fileInput = document.getElementById('fileInput');
     const previewArea = document.getElementById('preview-area');
     const webpImage = document.getElementById('webpImage');
     const downloadLink = document.getElementById('downloadLink');
     const statusText = document.getElementById('status');
+    const uploadBox = document.querySelector('.upload-box');
 
-    fileInput.addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        
+    // Drag and Drop Effects
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadBox.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadBox.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadBox.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        uploadBox.style.borderColor = '#667eea';
+        uploadBox.style.backgroundColor = '#ebf4ff';
+    }
+
+    function unhighlight(e) {
+        uploadBox.style.borderColor = '#cbd5e0';
+        uploadBox.style.backgroundColor = '#f7fafc';
+    }
+
+    uploadBox.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    }
+
+    fileInput.addEventListener('change', function(e) {
+        handleFiles(this.files);
+    });
+
+    function handleFiles(files) {
+        const file = files[0];
         if (!file) return;
 
-        // ফাইলের টাইপ চেক করা
         if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
-            alert('দয়া করে শুধুমাত্র JPG বা PNG ফাইল আপলোড করুন।');
+            statusText.innerText = '❌ দয়া করে শুধুমাত্র JPG বা PNG ফাইল আপলোড করুন।';
+            statusText.style.color = 'red';
             return;
         }
 
-        statusText.innerText = "কনভার্ট হচ্ছে...";
+        statusText.style.color = '#667eea';
+        statusText.innerText = "প্রসেসিং হচ্ছে...";
+        previewArea.style.display = 'none';
         
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -103,7 +256,6 @@
             img.src = event.target.result;
 
             img.onload = function() {
-                // ক্যানভাস তৈরি করা
                 const canvas = document.createElement('canvas');
                 canvas.width = img.width;
                 canvas.height = img.height;
@@ -111,22 +263,23 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
 
-                // ক্যানভাস থেকে WebP ফরম্যাটে ডাটা নেওয়া (Quality 0.8)
+                // কনভার্ট (Quality 0.8)
                 const webpDataUrl = canvas.toDataURL('image/webp', 0.8);
 
-                // প্রিভিউ এবং ডাউনলোড লিংক সেট করা
                 webpImage.src = webpDataUrl;
                 downloadLink.href = webpDataUrl;
                 
-                // অরিজিনাল ফাইলের নামের সাথে .webp জুড়ে দেওয়া
                 let fileName = file.name.split('.')[0];
                 downloadLink.download = `${fileName}.webp`;
 
                 previewArea.style.display = 'block';
-                statusText.innerText = "সফলভাবে কনভার্ট হয়েছে!";
+                statusText.innerText = "";
+                
+                // স্ক্রল করে নিচে নিয়ে যাওয়া (মোবাইলের জন্য ভালো)
+                previewArea.scrollIntoView({ behavior: 'smooth' });
             };
         };
-    });
+    }
 </script>
 
 </body>
