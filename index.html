@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPG/PNG to WebP Converter</title>
+    <style>
+        /* CSS ডিজাইন */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 { color: #333; margin-bottom: 20px; }
+        .upload-box {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        .upload-box:hover { background-color: #eef6ff; }
+        input[type="file"] { display: none; }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #preview-area { margin-top: 20px; display: none; }
+        img { max-width: 100%; height: auto; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ddd; }
+        .status { color: #666; font-size: 0.9em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ছবি কনভার্টার (WebP)</h2>
+    <p>JPG বা PNG ছবি আপলোড করুন</p>
+    
+    <label for="fileInput" class="upload-box">
+        ক্লিক করে ছবি সিলেক্ট করুন
+        <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg">
+    </label>
+
+    <div id="status" class="status"></div>
+
+    <div id="preview-area">
+        <h3>কনভার্ট করা ছবি:</h3>
+        <img id="webpImage" src="" alt="WebP Preview">
+        <br>
+        <a id="downloadLink" class="btn" download="converted-image.webp">ডাউনলোড করুন</a>
+    </div>
+</div>
+
+<script>
+    // JavaScript লজিক
+    const fileInput = document.getElementById('fileInput');
+    const previewArea = document.getElementById('preview-area');
+    const webpImage = document.getElementById('webpImage');
+    const downloadLink = document.getElementById('downloadLink');
+    const statusText = document.getElementById('status');
+
+    fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        
+        if (!file) return;
+
+        // ফাইলের টাইপ চেক করা
+        if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
+            alert('দয়া করে শুধুমাত্র JPG বা PNG ফাইল আপলোড করুন।');
+            return;
+        }
+
+        statusText.innerText = "কনভার্ট হচ্ছে...";
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = function() {
+                // ক্যানভাস তৈরি করা
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                // ক্যানভাস থেকে WebP ফরম্যাটে ডাটা নেওয়া (Quality 0.8)
+                const webpDataUrl = canvas.toDataURL('image/webp', 0.8);
+
+                // প্রিভিউ এবং ডাউনলোড লিংক সেট করা
+                webpImage.src = webpDataUrl;
+                downloadLink.href = webpDataUrl;
+                
+                // অরিজিনাল ফাইলের নামের সাথে .webp জুড়ে দেওয়া
+                let fileName = file.name.split('.')[0];
+                downloadLink.download = `${fileName}.webp`;
+
+                previewArea.style.display = 'block';
+                statusText.innerText = "সফলভাবে কনভার্ট হয়েছে!";
+            };
+        };
+    });
+</script>
+
+</body>
+</html>
